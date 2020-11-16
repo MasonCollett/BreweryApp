@@ -1,7 +1,7 @@
 
 DROP TABLE IF EXISTS `ingredients`;
 CREATE TABLE `ingredients` (
-  `id` int(11) NOT NULL AUTO_INCREMENT UNIQUE,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `ingredient_name` varchar(255) NOT NULL,
   `supplier` varchar(255) NOT NULL,
   `cost` decimal NOT NULL,

@@ -5,7 +5,7 @@
 SELECT drinks.id, price, inventory, ingredients.ingredient_name FROM drinks INNER JOIN ingredients ON secret_ingredient = ingredients.id
 
 -- get all promotions and their information for promotions page
-SELECT special_promotions.id, discount, promo_name FROM special_promotions
+SELECT special_promotions.id, discount_percentage, promo_name FROM special_promotions
 
 -- get a single drink's data for the Update People form
 SELECT id, price, inventory, secret_ingredient FROM drinks WHERE id = :drink_ID_selected_from_browse_drinks_page
