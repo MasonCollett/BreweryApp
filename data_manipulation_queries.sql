@@ -10,6 +10,9 @@ SELECT special_promotions.id, discount_percentage, promo_name FROM special_promo
 -- get a single drink's data for the Update People form
 SELECT id, price, inventory, secret_ingredient FROM drinks WHERE id = :drink_ID_selected_from_browse_drinks_page
 
+-- get all customer data for the customers page
+SELECT id, name, email, phone, favorite_drink, promo_applied FROM customerss 
+
 -- get all drinks with their current associated promotions to list
 SELECT promo_name, drinks.id AS drink_id
 FROM drinks 
@@ -20,6 +23,9 @@ ORDER BY drinks.id
 -- add a new drink
 INSERT INTO drinks (price, inventory, secret_ingredient) VALUES (:priceInput, :inventoryInput, :secret_ingredient_idInput)
 
+-- add a new customer
+INSERT INTO customerss (name, email, phone, favorite_drink, promo_applied) VALUES (:custName, :custEmail, :custPhone, :custFavDrink, :custSpecialPromo)
+
 -- add a new promotion
 INSERT INTO special_promotions (discount_percentage, name) VALUES (:discountInput, :name_Input)
 
@@ -29,11 +35,17 @@ INSERT INTO promotions_drinks (drink_id, promotion_id) VALUES (:drink_id__Input,
 -- update a drink's data based on submission of the Update Drink form 
 UPDATE drinks SET price = :priceInput, inventory = :inventoryInput, secret_ingredient = :secret_ingredient_id_Input WHERE id= :drink_ID_from_the_update_form
 
+-- update customer data
+UPDATE customerss SET name = :custName, email = :custEmail, phone = :custPhone, favorite_drink = :custFavDrink, promo_applied = :custSpecialPromo where id = :updateCustomer
+
 -- delete a drink
 DELETE FROM drinks WHERE id = :drink_ID_selected_from_browse_drinks_page
 
 -- delete a promotion
 DELETE FROM special_promotions WHERE id = :promotion_ID_selected_from_browse_promotions_page
+
+-- delete a customer
+DELETE FROM customerss wHERE id = :customer_to_delete
 
 -- dis-associate a promotion from a drink (M-to-M relationship deletion)
 DELETE FROM promotions_drinks WHERE drink_id = :drink_ID_selected_from_drink_and_promotion_list AND promotion_id = :promotion_ID_selected_from-drink_and_promotion_list
