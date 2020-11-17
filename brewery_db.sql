@@ -74,7 +74,7 @@ CREATE TABLE `customerss` (
 
 
 LOCK TABLES `customerss` WRITE;
-INSERT INTO `customerss` VALUES ('John','john123@gmail.com','5031234567',1,2),('Carol','queenb@yahoo.com',NULL,1,1);
+INSERT INTO `customerss` VALUES (1, 'John','john123@gmail.com','5031234567',1,2),(2, 'Carol','queenb@yahoo.com',NULL,1,1);
 UNLOCK TABLES;
 
 
