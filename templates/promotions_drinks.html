@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>Promotions_Drinks</title>
+</head>
+
+<body>
+  <h1>Current Promotions</h1>
+  <h4>Use this page to delete promotions+drinks relationships without deleting the drink or promotion</h4>
+  <h4><a href="/browse_drinks">Back to all drinks</a></h4>
+
+    <table border='1'>
+        <thead>
+            <th>drink_id</th>
+            <th>promotion_id</th>
+        </thead>
+        <tbody>
+        {% for r in rows %}
+        <tr>
+            <td>{{ r[0] }}</td>
+            <td>{{ r[1] }}</td>
+            <td> <input type='button' name='Delete' value='Delete' onclick="window.location = '/delete_promo_drink/{{r}}'"></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
