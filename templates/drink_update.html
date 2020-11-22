@@ -1,0 +1,31 @@
+<html>
+<head>
+    <title>Update drink</title>
+</head>
+
+<body>
+  <h1>Update Drink {{drink.id}}:</h1>
+
+  <form id="update_drink" action="/update_drink/{{drink[0]}}" method="post">
+    <!-- character_id {{ character_id }} -->
+    <input type="hidden" name="drink_id" value = "{{ drink[0] }}">
+    Price: <input type="number" name="price" value = "{{ drink[1] }}"><br>
+    Inventory: <input type="number" name="inventory" value = "{{ drink[2] }}" ><br>
+    Secret Ingredient: <select name="sec_ing">
+      <!-- display all ingredients inside this dropdown -->
+            {% for ing in ingredients %}
+              {{ ing[0] }}
+              {{ drink[3] }}
+              {% if ing[0] == drink[3] %}
+                 <option selected value="{{ ing[0] }}">{{ ing[1] }}</option>
+              {% else %}
+                <option value="{{ ing[0] }}">{{ ing[1] }}</option>
+              {% endif %}
+            {% endfor %}
+        </select><br>
+    <input type="submit" value="Submit">
+   </form>
+
+</body>
+</html>
+
