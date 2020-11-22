@@ -30,14 +30,16 @@ def browse_drinks():
     ing_result = execute_query(db_connection,query).fetchall()
 
     return render_template('browse_drinks.html', rows=drink_result, ingredients = ing_result)
-    
+
+# deleting a drink
 @webapp.route('/delete_drink/<int:id>')
-def delete_people(id):
-    '''deletes a drink with the given id'''
+def delete_drink(id):
+    # remove from drinks table
     db_connection = connect_to_database()
     query = "DELETE FROM drinks WHERE id = %s"
     data = (id,)
     result = execute_query(db_connection, query, data)
+
     return redirect(url_for('browse_drinks'))
 
 #display update form and process any updates, using the same function
@@ -84,3 +86,29 @@ def drink_search():
         return render_template('drink_search.html', drink=drink_result)
 
     return render_template('drink_search.html')
+
+@webapp.route('/promotions_drinks')
+def promotions_drinks():
+    db_connection = connect_to_database()
+    print("Fetching and rendering promotions_drinks")
+    query = "SELECT drink_id, promotion_id from promotions_drinks;"
+    result = execute_query(db_connection, query).fetchall()
+    return render_template('promotions_drinks.html', rows=result)
+
+# deleting a drink
+@webapp.route('/delete_promo_drink/<row>')
+def delete_promo_drink(row):
+    # remove from m:m table
+    db_connection = connect_to_database()
+    row = row.strip('(')
+    row = row.strip(')')
+    ids = row.split(',')
+    drink_id = int(ids[0].strip(' '))
+    promo_id = int(ids[1].strip(' '))
+    query = "DELETE FROM promotions_drinks WHERE drink_id = %s AND promotion_id = %s"
+    data = (drink_id,promo_id)
+    result = execute_query(db_connection, query, data)
+
+    return redirect(url_for('promotions_drinks'))
+
+
