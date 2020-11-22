@@ -73,3 +73,14 @@ def update_drink(id):
 
         return redirect('/browse_drinks')
 
+@webapp.route('/drink_search', methods=['GET', 'POST'])
+def drink_search():
+    drink=["","","",""]
+    if request.method == "POST":
+        db_connection = connect_to_database()
+        drink_id = request.form['drink']
+        drink_query = 'SELECT id, price, inventory, secret_ingredient from drinks WHERE id = %s'  % (drink_id)
+        drink_result = execute_query(db_connection, drink_query).fetchall()
+        return render_template('drink_search.html', drink=drink_result)
+
+    return render_template('drink_search.html')
