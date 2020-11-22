@@ -87,13 +87,43 @@ def drink_search():
 
     return render_template('drink_search.html')
 
-@webapp.route('/promotions_drinks')
+@webapp.route('/promotions_drinks', methods=['POST','GET'])
 def promotions_drinks():
     db_connection = connect_to_database()
+
+    # Adding a new relationship from form
+    if request.method == 'POST':
+        print("Add new m:m relationshi!")
+        drink_id = request.form['drink_id']
+        promo_id = request.form['promo_id']
+        query = 'INSERT INTO promotions_drinks (drink_id, promotion_id) VALUES (%s,%s)'
+        data = (drink_id, promo_id)
+        execute_query(db_connection, query, data)
+        print("relationship added!")
+
     print("Fetching and rendering promotions_drinks")
     query = "SELECT drink_id, promotion_id from promotions_drinks;"
     result = execute_query(db_connection, query).fetchall()
-    return render_template('promotions_drinks.html', rows=result)
+
+    # Getting drink_ids for add new relationship dropdown 
+    query = 'SELECT id FROM drinks'
+    drink_ids = execute_query(db_connection,query).fetchall()
+    drink_ids = list(drink_ids)
+    drink_ids = [str(i) for i in drink_ids]
+    drink_ids = [i.strip('(),') for i in drink_ids]
+    drink_ids = [int(i) for i in drink_ids]
+    print("DRINK IDS:", drink_ids)
+
+    # Getting promo_ids for add new relationship dropdown 
+    query = 'SELECT id FROM special_promotions'
+    promo_ids = execute_query(db_connection,query).fetchall()
+    promo_ids = list(promo_ids)
+    promo_ids = [str(i) for i in promo_ids]
+    promo_ids = [i.strip('(),') for i in promo_ids]
+    promo_ids = [int(i) for i in promo_ids]
+    print("PROMO IDS:", promo_ids)
+
+    return render_template('promotions_drinks.html', rows=result, drink_ids = drink_ids, promo_ids = promo_ids)
 
 # deleting a drink
 @webapp.route('/delete_promo_drink/<row>')
