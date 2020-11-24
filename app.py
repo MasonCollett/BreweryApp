@@ -11,23 +11,23 @@ from db_connector.db_connector import connect_to_database, execute_query
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-links = '<a href="http://flip2.engr.oregonstate.edu:36963/ingredients.html">View/Add Ingredients</a><br>'
-links += '<a href="http://flip2.engr.oregonstate.edu:36963/customers.html">View/Add Customers</a><br>'
-links += '<a href="http://flip2.engr.oregonstate.edu:36963/promotions.html">View/Add Promotions</a><br>'
-links += '<a href="http://flip2.engr.oregonstate.edu:36963/browse_drinks.html">View/Add Drinks</a><br>'
-links += '<a href="http://flip2.engr.oregonstate.edu:36963/drink_update.html">Update Drinks</a><br>'
-links += '<a href="http://flip2.engr.oregonstate.edu:36963/drink_search"Search Drinks</a><br>'
+links = ' <a href="http://flip3.engr.oregonstate.edu:36963/ingredients.html">View/Add Ingredients</a><br>'
+links += ' <a href="http://flip3.engr.oregonstate.edu:36963/customers.html">View/Add Customers</a><br>'
+links += ' <a href="http://flip3.engr.oregonstate.edu:36963/promotions.html">View/Add Promotions</a><br>'
+links += ' <a href="http://flip3.engr.oregonstate.edu:36963/browse_drinks.html">View/Add Drinks</a><br>'
+links += ' <a href="http://flip3.engr.oregonstate.edu:36963/drink_search.html">Search Drinks</a><br>'
+links += ' <a href="http://flip3.engr.oregonstate.edu:36963/promotions_drinks">View/Add Current Promotions</a><br>'
 
 
 # Connector information found at https://dev.mysql.com/doc/connector-python/en/connector-python-connectargs.html
-def connect_database(database_location, user, password, db_name):
-    try:
-        db_connect = mysql.connector.connect(
-            user=user, password=password,
-            database=db_name, host=database_location)
-        return db_connect
-    except:
-        print("Connection failed\n")
+# def connect_database(database_location, user, password, db_name):
+#     try:
+#         db_connect = mysql.connector.connect(
+#             user=user, password=password,
+#             database=db_name, host=database_location)
+#         return db_connect
+#     except:
+#         print("Connection failed\n")
 
 
 class MultiCheckboxField(SelectMultipleField):
@@ -92,7 +92,7 @@ class IngredientEntryForm(Form):
 
 
 class SpecialPromotionsEntryForm(Form):
-    sql_connection = connect_database("classmysql.engr.oregonstate.edu", "cs340_highlanb", "0223", "cs340_highlanb")
+    sql_connection = connect_to_database()
     cursor = sql_connection.cursor()
     query = "SELECT id, name FROM customerss"
     cursor.execute(query)
@@ -117,7 +117,7 @@ class CustomersEntryForm(Form):
 
 @app.route('/index.html')
 def index():
-    sql_connection = connect_database("classmysql.engr.oregonstate.edu", "cs340_highlanb", "0223", "cs340_highlanb")
+    sql_connection = connect_to_database()
     cursor = sql_connection.cursor()
     payload = "<tr>"
     payload += str(links) + "</tr><br>"
@@ -128,7 +128,7 @@ def index():
 
 @app.route('/ingredients.html', methods=['POST', 'GET'])
 def ingredients():
-    sql_connection = connect_database("classmysql.engr.oregonstate.edu", "cs340_highlanb", "0223", "cs340_highlanb")
+    sql_connection = connect_to_database()
     cursor = sql_connection.cursor()
     form = IngredientEntryForm()
     if request.method == 'POST':
@@ -156,22 +156,9 @@ def ingredients():
         sql_connection.close()
         return "<html><body>" + render_template('addingredients.html', form=form) + "<h1>Ingredient Information</h1>" + ingredient_table.__html__() + links + "</body></html>"
 
-
-@app.route('/drink_update.html')
-def drink_update():
-
-    return render_template('drink_update.html') + "<br>" + links
-
-
-@app.route('/browse_drinks.html')
-def drinks_browse():
-
-    return render_template('browse_drinks.html') + links
-
-
 @app.route('/customers.html', methods=['POST', 'GET'])
 def customers():
-    sql_connection = connect_database("classmysql.engr.oregonstate.edu", "cs340_highlanb", "0223", "cs340_highlanb")
+    sql_connection = connect_to_database()
     cursor = sql_connection.cursor()
     form = CustomersEntryForm()
     if request.method == 'POST':
@@ -202,7 +189,7 @@ def customers():
 
 @app.route('/promotions.html', methods=['POST', 'GET'])
 def promotions():
-    sql_connection = connect_database("classmysql.engr.oregonstate.edu", "cs340_highlanb", "0223", "cs340_highlanb")
+    sql_connection = connect_to_database()
     cursor = sql_connection.cursor()
     form = SpecialPromotionsEntryForm()
 
@@ -236,7 +223,7 @@ def addpromotions():
     return render_template('drink_search.html', form=form) + links
 
 
-@app.route('/browse_drinks', methods=['POST', 'GET'])
+@app.route('/browse_drinks.html', methods=['POST', 'GET'])
 def browse_drinks():
     db_connection = connect_to_database()
 
@@ -304,7 +291,7 @@ def update_drink(id):
         result = execute_query(db_connection, query, data)
         print(str(result.rowcount) + " row(s) updated")
 
-        return redirect('/browse_drinks')
+        return redirect('/browse_drinks.html')
 
 @app.route('/drink_search', methods=['GET', 'POST'])
 def drink_search():
