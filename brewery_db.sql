@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS `special_promotions`;
 CREATE TABLE `special_promotions` (
   `id` int(11) NOT NULL AUTO_INCREMENT UNIQUE,
   `discount_percentage` decimal NOT NULL,
-  `promo_name` varchar(255) DEFAULT NULL,
+  `promo_name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -63,9 +63,9 @@ CREATE TABLE `customerss` (
   `id` int(11) AUTO_INCREMENT PRIMARY KEY,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) UNIQUE,
-  `phone` varchar(255) DEFAULT NULL,
-  `favorite_drink` int(11) NOT NULL,
-  `promo_applied` int(11) NOT NULL,
+  `phone` varchar(255) NOT NULL,
+  `favorite_drink` int(11),
+  `promo_applied` int(11),
   KEY `promo_applied` (`promo_applied`),
   KEY `favorite_drink` (`favorite_drink`),
   CONSTRAINT `customers_drinks_ibfk_1` FOREIGN KEY (`favorite_drink`) REFERENCES `drinks` (`id`),
