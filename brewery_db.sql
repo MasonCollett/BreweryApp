@@ -66,7 +66,7 @@ CREATE TABLE `customerss` (
   `phone` varchar(255) DEFAULT NULL,
   `favorite_drink` int(11) NOT NULL,
   `promo_applied` int(11) NOT NULL,
-  KEY `promo_appliedid` (`promo_applied`),
+  KEY `promo_applied` (`promo_applied`),
   KEY `favorite_drink` (`favorite_drink`),
   CONSTRAINT `customers_drinks_ibfk_1` FOREIGN KEY (`favorite_drink`) REFERENCES `drinks` (`id`),
   CONSTRAINT `customers_special_promotions_ibfk_1` FOREIGN KEY (`promo_applied`) REFERENCES `special_promotions` (`id`)

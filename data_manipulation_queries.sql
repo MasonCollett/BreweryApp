@@ -48,4 +48,4 @@ DELETE FROM special_promotions WHERE id = :promotion_ID_selected_from_browse_pro
 DELETE FROM customerss wHERE id = :customer_to_delete
 
 -- dis-associate a promotion from a drink (M-to-M relationship deletion)
-DELETE FROM promotions_drinks WHERE drink_id = :drink_ID_selected_from_drink_and_promotion_list AND promotion_id = :promotion_ID_selected_from-drink_and_promotion_list
+DELETE FROM promotions_drinks WHERE drink_id = :drink_ID_selected_from_drink_and_promotion_list AND promotion_id = :promotion_ID_selected_from_drink_and_promotion_list

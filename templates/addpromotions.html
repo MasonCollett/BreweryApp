@@ -1,0 +1,17 @@
+{% block content %}
+    <h1>Special Promotion Entry</h1>
+    <form action="" method="post" novalidate>
+        <p> {{ form.promo_name.label }}<br>
+            {{ form.promo_name(size=32) }}
+        </p>
+        <p> {{ form.discount_percentage.label }}<br>
+            {{ form.discount_percentage(size=32) }}
+        </p>
+        <p> Applicable Drinks
+        </p>
+        <p> {{ form.drinks }}
+        </p>
+        <p>{{ form.submit() }}
+        </p>
+    </form>
+{% endblock %}

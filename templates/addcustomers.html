@@ -1,0 +1,22 @@
+{% block content %}
+    <h1>New Customer Entry</h1>
+    <form action="/customers.html" method="POST" novalidate>
+        <p> {{ form.name.label }}<br>
+            {{ form.name(size=32) }}
+        </p>
+        <p> {{ form.email.label }}<br>
+            {{ form.email(size=32) }}
+        </p>
+        <p> {{ form.phone.label }}<br>
+            {{ form.phone(size=32) }}
+        </p>
+        <p> {{ form.favorite_drink.label }}<br>
+            {{ form.favorite_drink(size=32) }}
+        </p>
+        <p> {{ form.promo_applied.label }}<br>
+            {{ form.promo_applied(size=32) }}
+        </p>
+        <p>{{ form.submit() }}
+        </p>
+    </form>
+{% endblock %}

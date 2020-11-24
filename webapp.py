@@ -5,7 +5,7 @@ from db_connector.db_connector import connect_to_database, execute_query
 webapp = Flask(__name__)
 webapp.config['TEMPLATES_AUTO_RELOAD'] = True
 
-@webapp.route('/browse_drinks', methods=['POST','GET'])
+@webapp.route('/browse_drinks', methods=['POST', 'GET'])
 def browse_drinks():
     db_connection = connect_to_database()
 
@@ -19,7 +19,7 @@ def browse_drinks():
         data = (price, inventory, secret_ingredient)
         execute_query(db_connection, query, data)
         print("drink added!")
-    
+
     # Getting current drinks 
     print("Fetching and rendering drinks web page")
     query = "SELECT id, price, inventory, secret_ingredient from drinks;"
@@ -27,9 +27,9 @@ def browse_drinks():
 
     # Getting ingredients for add new drink dropdown 
     query = 'SELECT id, ingredient_name FROM ingredients'
-    ing_result = execute_query(db_connection,query).fetchall()
+    ing_result = execute_query(db_connection, query).fetchall()
 
-    return render_template('browse_drinks.html', rows=drink_result, ingredients = ing_result)
+    return render_template('browse_drinks.html', rows=drink_result, ingredients=ing_result)
 
 # deleting a drink
 @webapp.route('/delete_drink/<int:id>')
@@ -77,17 +77,17 @@ def update_drink(id):
 
 @webapp.route('/drink_search', methods=['GET', 'POST'])
 def drink_search():
-    drink=["","","",""]
+    drink = ["", "", "", ""]
     if request.method == "POST":
         db_connection = connect_to_database()
         drink_id = request.form['drink']
-        drink_query = 'SELECT id, price, inventory, secret_ingredient from drinks WHERE id = %s'  % (drink_id)
+        drink_query = 'SELECT id, price, inventory, secret_ingredient from drinks WHERE id = %s' % (drink_id)
         drink_result = execute_query(db_connection, drink_query).fetchall()
         return render_template('drink_search.html', drink=drink_result)
 
     return render_template('drink_search.html')
 
-@webapp.route('/promotions_drinks', methods=['POST','GET'])
+@webapp.route('/promotions_drinks', methods=['POST', 'GET'])
 def promotions_drinks():
     db_connection = connect_to_database()
 
@@ -107,7 +107,7 @@ def promotions_drinks():
 
     # Getting drink_ids for add new relationship dropdown 
     query = 'SELECT id FROM drinks'
-    drink_ids = execute_query(db_connection,query).fetchall()
+    drink_ids = execute_query(db_connection, query).fetchall()
     drink_ids = list(drink_ids)
     drink_ids = [str(i) for i in drink_ids]
     drink_ids = [i.strip('(),') for i in drink_ids]
@@ -116,14 +116,14 @@ def promotions_drinks():
 
     # Getting promo_ids for add new relationship dropdown 
     query = 'SELECT id FROM special_promotions'
-    promo_ids = execute_query(db_connection,query).fetchall()
+    promo_ids = execute_query(db_connection, query).fetchall()
     promo_ids = list(promo_ids)
     promo_ids = [str(i) for i in promo_ids]
     promo_ids = [i.strip('(),') for i in promo_ids]
     promo_ids = [int(i) for i in promo_ids]
     print("PROMO IDS:", promo_ids)
 
-    return render_template('promotions_drinks.html', rows=result, drink_ids = drink_ids, promo_ids = promo_ids)
+    return render_template('promotions_drinks.html', rows=result, drink_ids=drink_ids, promo_ids=promo_ids)
 
 # deleting a drink
 @webapp.route('/delete_promo_drink/<row>')
@@ -136,7 +136,7 @@ def delete_promo_drink(row):
     drink_id = int(ids[0].strip(' '))
     promo_id = int(ids[1].strip(' '))
     query = "DELETE FROM promotions_drinks WHERE drink_id = %s AND promotion_id = %s"
-    data = (drink_id,promo_id)
+    data = (drink_id, promo_id)
     result = execute_query(db_connection, query, data)
 
     return redirect(url_for('promotions_drinks'))

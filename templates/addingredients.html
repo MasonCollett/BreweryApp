@@ -1,0 +1,16 @@
+{% block content %}
+    <h1>Ingredient Entry</h1>
+    <form action="" method="post" novalidate>
+        <p> {{ form.ingredient_name.label }}<br>
+            {{ form.ingredient_name(size=32) }}
+        </p>
+        <p> {{ form.supplier.label }}<br>
+            {{ form.supplier(size=32) }}
+        </p>
+        <p> {{ form.cost.label }}<br>
+            {{ form.cost(size=32) }}
+        </p>
+        <p> {{ form.submit() }}
+        </p>
+    </form>
+{% endblock %}
