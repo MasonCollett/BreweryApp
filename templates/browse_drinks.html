@@ -5,9 +5,10 @@
 <body>
 
   <h1>Add new drink</a></h1>
-  <form id="adddrink" action="/browse_drinks" method="post">
-      Price: <input type="number" name="price"><br>
-      Inventory: <input type="number" name="inventory"><br>
+  <form id="adddrink" action="/browse_drinks.html" method="post">
+      Price: <input type="number" name="price" placeholder="required"><br>
+      Name: <input type="text" name="name" placeholder="required"><br>
+      Inventory: <input type="number" name="inventory" placeholder="required"><br>
       Secret Ingredient: <select name="sec_ing">
               {% for i in ingredients %}
                 <option value="{{ i[0] }}">{{ i[1] }}</option>
@@ -16,7 +17,6 @@
       <input type="submit" value="Submit">
   </form>
 
-  <h3><a href="/promotions_drinks">View current drink promotions</a></h3>
   <h3><a href="/drink_search">Search for a Drink</a></h3>
 
   <h1>Current Drinks</h1>
@@ -25,6 +25,7 @@
     <table border='1'>
         <thead>
             <th>ID</th>
+            <th>Name</th>
             <th>Price</th>
             <th>Inventory</th>
             <th>Secret Ingredient</th>
@@ -33,6 +34,7 @@
           {% for r in rows %}
           <tr>
             <td>{{ r[0] }}</td>
+            <td>{{ r[4] }}</td>
             <td>{{ r[1] }}</td>
             <td>{{ r[2] }}</td>
             <td>{{ r[3] }}</td>
@@ -42,10 +44,11 @@
           {% endfor %}
         </tbody>
     </table>
+    <br>
+    {{links|safe}}
+
   </body>
 </html>
-
-
 
 
 
