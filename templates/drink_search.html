@@ -12,6 +12,7 @@
     <table border='1'>
         <thead>
             <th>ID</th>
+            <th>Name</th>
             <th>Price</th>
             <th>Inventory</th>
             <th>Secret Ingredient</th>
@@ -20,6 +21,7 @@
           {% for d in drink %}
           <tr>
             <td>{{ d[0] }}</td>
+            <td>{{ d[4] }}</td>
             <td>{{ d[1] }}</td>
             <td>{{ d[2] }}</td>
             <td>{{ d[3] }}</td>
@@ -30,5 +32,7 @@
         </tbody>
     </table>
 
+    <br>
+    <h4><a href="/browse_drinks.html">Back to all drinks</a></h4>
 </body>
 </html>
