@@ -1,5 +1,10 @@
-
+DROP TABLE IF EXISTS `promotions_drinks`;
+DROP TABLE IF EXISTS `customerss`;
+DROP TABLE IF EXISTS `drinks`;
 DROP TABLE IF EXISTS `ingredients`;
+DROP TABLE IF EXISTS `special_promotions`;
+
+
 CREATE TABLE `ingredients` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ingredient_name` varchar(255) NOT NULL,
@@ -12,8 +17,6 @@ LOCK TABLES `ingredients` WRITE;
 INSERT INTO `ingredients` VALUES (1,'Lime','Lime Farms',0.50),(2,'Hops','Hoppy Valley',10.00),(3, 'Water', 'The City', 0.00);
 UNLOCK TABLES;
 
-
-DROP TABLE IF EXISTS `drinks`;
 
 CREATE TABLE `drinks` (
   `id` int(11) NOT NULL AUTO_INCREMENT UNIQUE,
@@ -29,7 +32,6 @@ LOCK TABLES `drinks` WRITE;
 INSERT INTO `drinks` VALUES (1,2.50,10,1),(2,7,4,2),(3,4.70,20,NULL),(4,5,6,3);
 UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `special_promotions`;
 CREATE TABLE `special_promotions` (
   `id` int(11) NOT NULL AUTO_INCREMENT UNIQUE,
   `discount_percentage` decimal NOT NULL,
@@ -42,8 +44,7 @@ LOCK TABLES `special_promotions` WRITE;
 INSERT INTO `special_promotions` VALUES (1,25,'Happy Hour'),(2,10,'Birthday'),(3,25,'Thirsty Thursday'),(4,15,'Gameday'),(5,30,'Margarita Madness');
 UNLOCK TABLES;
 
---
-DROP TABLE IF EXISTS `promotions_drinks`;
+
 CREATE TABLE `promotions_drinks` (
   `drink_id` int(11) NOT NULL DEFAULT '0',
   `promotion_id` int(11) NOT NULL DEFAULT '0',
@@ -57,7 +58,6 @@ LOCK TABLES `promotions_drinks` WRITE;
 INSERT INTO `promotions_drinks` VALUES (1,5),(1,2),(2,1),(2,2),(3,1),(3,5),(4,1),(4,4);
 UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `customerss`;
 
 CREATE TABLE `customerss` (
   `id` int(11) AUTO_INCREMENT PRIMARY KEY,
