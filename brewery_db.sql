@@ -20,6 +20,7 @@ UNLOCK TABLES;
 
 CREATE TABLE `drinks` (
   `id` int(11) NOT NULL AUTO_INCREMENT UNIQUE,
+  `name` varchar(255) NOT NULL,
   `price` decimal NOT NULL,
   `inventory` int NOT NULL,
   `secret_ingredient` int(11) DEFAULT NULL,
@@ -29,7 +30,7 @@ CREATE TABLE `drinks` (
 );
 
 LOCK TABLES `drinks` WRITE;
-INSERT INTO `drinks` VALUES (1,2.50,10,1),(2,7,4,2),(3,4.70,20,NULL),(4,5,6,3);
+INSERT INTO `drinks` VALUES (1,'Drink One',2.50,10,1),(2,'Pale Ale',7,4,2),(3,'Nothin Special',4.70,20,NULL),(4,'The Classic',5,6,3);
 UNLOCK TABLES;
 
 CREATE TABLE `special_promotions` (
@@ -44,7 +45,7 @@ LOCK TABLES `special_promotions` WRITE;
 INSERT INTO `special_promotions` VALUES (1,25,'Happy Hour'),(2,10,'Birthday'),(3,25,'Thirsty Thursday'),(4,15,'Gameday'),(5,30,'Margarita Madness');
 UNLOCK TABLES;
 
-
+--
 CREATE TABLE `promotions_drinks` (
   `drink_id` int(11) NOT NULL DEFAULT '0',
   `promotion_id` int(11) NOT NULL DEFAULT '0',
