@@ -4,25 +4,44 @@
 </head>
 
 <body>
-  <h1>Current Promotions</h1>
-  <h4>Use this page to delete promotions+drinks relationships without deleting the drink or promotion</h4>
-  <h4><a href="/browse_drinks">Back to all drinks</a></h4>
+  <h1>Active Promotions</h1>
+  <h4>Use this page to add or delete promotions+drinks relationships without deleting the drink or promotion</h4>
+
+  <h1>Add new relationship</a></h1>
+  <form id="add_promo_drink" action="/promotions_drinks" method="post">
+        Drink ID: <select name="drink_id">
+            {% for i in drink_ids %}
+                <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+        </select><br>
+        Promo ID: <select name="promo_id">
+            {% for i in promo_ids %}
+                <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+        </select><br>
+        <input type="submit" value="Submit">
+  </form>
 
     <table border='1'>
         <thead>
             <th>drink_id</th>
+            <th>Drink Name</th>
             <th>promotion_id</th>
+            <th>Promo Name</th>
         </thead>
         <tbody>
         {% for r in rows %}
         <tr>
             <td>{{ r[0] }}</td>
+            <td>{{ r[3] }}</td>
             <td>{{ r[1] }}</td>
-            <td> <input type='button' name='Delete' value='Delete' onclick="window.location = '/delete_promo_drink/{{r}}'"></td>
+            <td>{{ r[2] }}</td>
+            <td> <input type='button' name='Delete' value='Delete' onclick="window.location = '/delete_promo_drink/{{r[0],r[1]}}'"></td>
         </tr>
         {% endfor %}
         </tbody>
     </table>
-
+    <br>
+    {{links|safe}}
 </body>
 </html>
