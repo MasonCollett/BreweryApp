@@ -13,10 +13,10 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 links = ' <a href="http://flip3.engr.oregonstate.edu:36963/ingredients.html">View/Add Ingredients</a><br>'
 links += ' <a href="http://flip3.engr.oregonstate.edu:36963/customers.html">View/Add Customers</a><br>'
-links += ' <a href="http://flip3.engr.oregonstate.edu:36963/promotions.html">View/Add Promotions</a><br>'
+links += ' <a href="http://flip3.engr.oregonstate.edu:36963/promotions.html">View/Add Available Promotions</a><br>'
 links += ' <a href="http://flip3.engr.oregonstate.edu:36963/browse_drinks.html">View/Add Drinks</a><br>'
 links += ' <a href="http://flip3.engr.oregonstate.edu:36963/drink_search.html">Search Drinks</a><br>'
-links += ' <a href="http://flip3.engr.oregonstate.edu:36963/promotions_drinks">View/Add Current Promotions</a><br>'
+links += ' <a href="http://flip3.engr.oregonstate.edu:36963/promotions_drinks">View/Add/Delete Active Promotions</a><br>'
 
 
 # Connector information found at https://dev.mysql.com/doc/connector-python/en/connector-python-connectargs.html
@@ -231,29 +231,34 @@ def browse_drinks():
     if request.method == 'POST':
         print("Add new drink!")
         price = request.form['price']
+        name = request.form['name']
         inventory = request.form['inventory']
         secret_ingredient = request.form['sec_ing']
-        query = 'INSERT INTO drinks (price, inventory, secret_ingredient) VALUES (%s,%s,%s)'
-        data = (price, inventory, secret_ingredient)
-        execute_query(db_connection, query, data)
-        print("drink added!")
+        if(price != '' and inventory != '' and name != ''):
+            query = 'INSERT INTO drinks (price, inventory, secret_ingredient, name) VALUES (%s,%s,%s, %s)'
+            data = (price, inventory, secret_ingredient,name)
+            execute_query(db_connection, query, data)
+            print("drink added!")
 
     # Getting current drinks
     print("Fetching and rendering drinks web page")
-    query = "SELECT id, price, inventory, secret_ingredient from drinks;"
+    query = "SELECT drinks.id, price, inventory, ingredients.ingredient_name as 'Secret Ingredient', drinks.name from drinks JOIN ingredients ON drinks.secret_ingredient = ingredients.id;"
     drink_result = execute_query(db_connection, query).fetchall()
 
     # Getting ingredients for add new drink dropdown
     query = 'SELECT id, ingredient_name FROM ingredients'
     ing_result = execute_query(db_connection, query).fetchall()
 
-    return render_template('browse_drinks.html', rows=drink_result, ingredients=ing_result)
+    return render_template('browse_drinks.html', rows=drink_result, ingredients=ing_result, links=links)
 
 # deleting a drink
 @app.route('/delete_drink/<int:id>')
 def delete_drink(id):
     # remove from drinks table
     db_connection = connect_to_database()
+    query = "DELETE FROM promotions_drinks WHERE drink_id = %s"
+    data = (id,)
+    result = execute_query(db_connection, query, data)
     query = "DELETE FROM drinks WHERE id = %s"
     data = (id,)
     result = execute_query(db_connection, query, data)
@@ -268,7 +273,7 @@ def update_drink(id):
     #display existing data
     if request.method == 'GET':
         print('The GET request')
-        drink_query = 'SELECT id, price, inventory, secret_ingredient from drinks WHERE id = %s'  % (id)
+        drink_query = 'SELECT id, price, inventory, secret_ingredient, name from drinks WHERE id = %s'  % (id)
         drink_result = execute_query(db_connection, drink_query).fetchone()
 
         if drink_result == None:
@@ -284,10 +289,11 @@ def update_drink(id):
         id = request.form['drink_id']
         price = request.form['price']
         inventory = request.form['inventory']
+        name = request.form['name']
         secret_ingredient = request.form['sec_ing']
 
-        query = "UPDATE drinks SET price = %s, inventory = %s, secret_ingredient = %s WHERE id = %s"
-        data = (price, inventory, secret_ingredient, id)
+        query = "UPDATE drinks SET price = %s, inventory = %s, secret_ingredient = %s, name = %s WHERE id = %s"
+        data = (price, inventory, secret_ingredient, name, id)
         result = execute_query(db_connection, query, data)
         print(str(result.rowcount) + " row(s) updated")
 
@@ -299,7 +305,7 @@ def drink_search():
     if request.method == "POST":
         db_connection = connect_to_database()
         drink_id = request.form['drink']
-        drink_query = 'SELECT id, price, inventory, secret_ingredient from drinks WHERE id = %s' % (drink_id)
+        drink_query = 'SELECT id, price, inventory, secret_ingredient, name from drinks WHERE id = %s' % (drink_id)
         drink_result = execute_query(db_connection, drink_query).fetchall()
         return render_template('drink_search.html', drink=drink_result)
 
@@ -319,8 +325,9 @@ def promotions_drinks():
         execute_query(db_connection, query, data)
         print("relationship added!")
 
+    # Getting table to display relationships
     print("Fetching and rendering promotions_drinks")
-    query = "SELECT drink_id, promotion_id from promotions_drinks;"
+    query = "SELECT drink_id, promotion_id, special_promotions.promo_name AS 'Promo Name', drinks.name from promotions_drinks JOIN special_promotions ON promotions_drinks.promotion_id = special_promotions.id JOIN drinks ON promotions_drinks.drink_id = drinks.id;"
     result = execute_query(db_connection, query).fetchall()
 
     # Getting drink_ids for add new relationship dropdown 
@@ -341,13 +348,15 @@ def promotions_drinks():
     promo_ids = [int(i) for i in promo_ids]
     print("PROMO IDS:", promo_ids)
 
-    return render_template('promotions_drinks.html', rows=result, drink_ids=drink_ids, promo_ids=promo_ids)
+    return render_template('promotions_drinks.html', rows=result, drink_ids=drink_ids, promo_ids=promo_ids,links=links)
 
 # deleting a drink
 @app.route('/delete_promo_drink/<row>')
 def delete_promo_drink(row):
+    print("Deleting from promo_drink")
     # remove from m:m table
     db_connection = connect_to_database()
+    print(row)
     row = row.strip('(')
     row = row.strip(')')
     ids = row.split(',')
