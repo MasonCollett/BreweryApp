@@ -48,7 +48,9 @@ UNLOCK TABLES;
 --
 CREATE TABLE `promotions_drinks` (
   `drink_id` int(11) NOT NULL DEFAULT '0',
+  `drink_name` `name` varchar(255) NOT NULL,
   `promotion_id` int(11) NOT NULL DEFAULT '0',
+  `promo_name` varchar(255) NOT NULL,
   PRIMARY KEY (`drink_id`,`promotion_id`),
   KEY `promotion_id` (`promotion_id`),
   CONSTRAINT `promotions_drinks_ibfk_1` FOREIGN KEY (`drink_id`) REFERENCES `drinks` (`id`),
@@ -56,7 +58,7 @@ CREATE TABLE `promotions_drinks` (
 );
 
 LOCK TABLES `promotions_drinks` WRITE;
-INSERT INTO `promotions_drinks` VALUES (1,5),(1,2),(2,1),(2,2),(3,1),(3,5),(4,1),(4,4);
+INSERT INTO `promotions_drinks` VALUES (1,'Drink One',5,'Margarita Madness'),(1,'The Classic',2,'Birthday'),(2,'Pale Ale',1,'Happy Hour'),(2,'Pale Ale',2,'Birthday'),(3,'Nothin Special',1,'Happy Hour'),(3,'Nothin Special',5,'Margarita Madness'),(4,'The Classic',1),(4,'The Classic',4,'Gameday');
 UNLOCK TABLES;
 
 

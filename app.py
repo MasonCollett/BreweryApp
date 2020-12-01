@@ -135,6 +135,8 @@ def ingredients():
         ing_name = request.form['ingredient_name']
         ing_supplier = request.form['supplier']
         ing_cost = request.form['cost']
+        if ing_name == "" or ing_supplier == "" or ing_cost == "" or not ing_cost.is_numeric():
+            return redirect("/ingredients.html")
         query = "INSERT INTO ingredients (ingredient_name, supplier, cost) VALUES ('%s', '%s', '%s');"
         cursor.execute(query%(ing_name, ing_supplier, ing_cost))
         sql_connection.commit()
@@ -167,6 +169,8 @@ def customers():
         cust_phone = request.form['phone']
         cust_fav_drink = request.form['favorite_drink']
         cust_special_promo = request.form['promo_applied']
+        if cust_name == "":
+            return redirect("/customers.html")
         query = "INSERT INTO customerss (name, email, phone, favorite_drink, promo_applied) VALUES ('%s', '%s', '%s', '%s', '%s');"
         cursor.execute(query%(cust_name, cust_email, cust_phone, cust_fav_drink, cust_special_promo))
         sql_connection.commit()
@@ -194,11 +198,13 @@ def promotions():
     form = SpecialPromotionsEntryForm()
 
     if request.method == 'POST':
-        return "<html><body>" + str(request.form) + "</body></html>"
+        # return "<html><body>" + str(request.form) + "</body></html>"
 
         promo_name = request.form['promotion_name']
         discount = request.form['discount']
         cust_special_promo = request.form['promo_applied']
+        if promo_name == "" or discount == "" or cust_special_promo == "":
+            return redirect("/promotions.html")
         query = "INSERT INTO special_promotions (promo_name, discount_percentage) VALUES ('%s', '%s');"
         cursor.execute(query%(promo_name, discount))
         sql_connection.commit()
@@ -216,13 +222,6 @@ def promotions():
         promotion_table = PromotionTable(tables, border=1)
         return "<html><body>" + render_template("addpromotions.html", form=form) + "<h1>Available Promotions:</h1>" + promotion_table.__html__() + links + "</body></html>"
 
-
-@app.route('/drink_search.html')
-def addpromotions():
-    form = SpecialPromotionsEntryForm()
-    return render_template('drink_search.html', form=form) + links
-
-
 @app.route('/browse_drinks.html', methods=['POST', 'GET'])
 def browse_drinks():
     db_connection = connect_to_database()
@@ -236,7 +235,7 @@ def browse_drinks():
         secret_ingredient = request.form['sec_ing']
         if(price != '' and inventory != '' and name != ''):
             query = 'INSERT INTO drinks (price, inventory, secret_ingredient, name) VALUES (%s,%s,%s, %s)'
-            data = (price, inventory, secret_ingredient,name)
+            data = (price, inventory, secret_ingredient, name)
             execute_query(db_connection, query, data)
             print("drink added!")
 
@@ -317,7 +316,7 @@ def promotions_drinks():
 
     # Adding a new relationship from form
     if request.method == 'POST':
-        print("Add new m:m relationshi!")
+        print("Add new m:m relationship!")
         drink_id = request.form['drink_id']
         promo_id = request.form['promo_id']
         query = 'INSERT INTO promotions_drinks (drink_id, promotion_id) VALUES (%s,%s)'
