@@ -1,9 +1,12 @@
 <html>
 <head>
     <title>Promotions_Drinks</title>
+    <link rel='stylesheet' href='static/CSS/flask_stylesheet.css'/></head>
 </head>
 
 <body>
+    {{links|safe}}
+
   <h1>Active Promotions</h1>
   <h4>Use this page to add or delete promotions+drinks relationships without deleting the drink or promotion</h4>
 
@@ -42,6 +45,5 @@
         </tbody>
     </table>
     <br>
-    {{links|safe}}
 </body>
 </html>
