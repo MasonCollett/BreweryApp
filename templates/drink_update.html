@@ -1,16 +1,19 @@
 <html>
 <head>
     <title>Update drink</title>
+    <link rel='stylesheet' href='static/CSS/flask_stylesheet.css'/></head>
 </head>
 
 <body>
+  <!-- {{links|safe}} -->
+
   <h1>Update Drink {{drink.id}}:</h1>
 
   <form id="update_drink" action="/update_drink/{{drink[0]}}" method="post">
     <input type="hidden" name="drink_id" value = "{{ drink[0] }}">
-    Price: <input type="number" name="price" value = "{{ drink[1] }}"><br>
-    Name: <input type="text" name="name" value = "{{ drink[4] }}"><br>
-    Inventory: <input type="number" name="inventory" value = "{{ drink[2] }}" ><br>
+    Price: <input type="number" name="price" value = "{{ drink[1] }}" required><br>
+    Name: <input type="text" name="name" value = "{{ drink[4] }}" required><br>
+    Inventory: <input type="number" name="inventory" value = "{{ drink[2] }}" required><br>
     Secret Ingredient: <select name="sec_ing">
       <!-- display all ingredients inside this dropdown -->
             {% for ing in ingredients %}
