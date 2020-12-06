@@ -28,7 +28,7 @@ INSERT INTO drinks (price, inventory, secret_ingredient, name) VALUES (:price_in
 INSERT INTO customerss (name, email, phone, favorite_drink, promo_applied) VALUES (:custName, :custEmail, :custPhone, :custFavDrink, :custSpecialPromo)
 
 -- add a new promotion
-INSERT INTO special_promotions (discount_percentage, name) VALUES (:discountInput, :name_Input)
+INSERT IGNORE INTO special_promotions (discount_percentage, name) VALUES (:discountInput, :name_Input)
 
 -- associate a drink with a promotion (M-to-M relationship addition)
 INSERT INTO promotions_drinks (drink_id, promotion_id) VALUES (:drink_id__Input, :promotion_id_Input)
