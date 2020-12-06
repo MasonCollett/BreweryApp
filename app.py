@@ -31,7 +31,7 @@ links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/drink_search">Sea
 #     except:
 #         print("Connection failed\n")
 
-
+# class for making ingredient table
 class IngredientTable(Table):
     ingredient_id = Col('id')
     ingredient_name = Col('Ingredient Name')
@@ -39,6 +39,7 @@ class IngredientTable(Table):
     cost = Col('Cost')
 
 
+# class for ingredients from form
 class IngredientItem(object):
     def __init__(self, ingredient_id, ingredient_name, supplier, cost):
         self.ingredient_id = ingredient_id
@@ -46,7 +47,7 @@ class IngredientItem(object):
         self.supplier = supplier
         self.cost = cost
 
-
+# class for making customer table
 class CustomerTable(Table):
     customer_id = Col('id')
     customer_name = Col('Customer Name')
@@ -55,7 +56,7 @@ class CustomerTable(Table):
     favorite_drink = Col('Favorite Drink')
     promo_applied = Col('Current Promotion Applied')
 
-
+# class for customers from form
 class CustomerItem(object):
     def __init__(self, customer_id, customer_name, email, phone_number, favorite_drink, promo_applied):
         self.customer_id = customer_id
@@ -66,12 +67,14 @@ class CustomerItem(object):
         self.promo_applied = promo_applied
 
 
+# class for making promotion table
 class PromotionTable(Table):
     promotion_id = Col('id')
     discount = Col('Discount %')
     promotion_name = Col('Promotion Name')
 
 
+# class for promotions from form
 class PromotionItem(object):
     def __init__(self, promotion_id, discount, promotion_name):
         self.promotion_id = promotion_id
@@ -79,7 +82,7 @@ class PromotionItem(object):
         self.promotion_name = promotion_name
 
 
-
+# Entry form for adding ingredients using WTForms
 class IngredientEntryForm(Form):
     ingredient_name = StringField(u'Ingredient Name')
     supplier = StringField(u'Supplier')
@@ -87,6 +90,7 @@ class IngredientEntryForm(Form):
     submit = SubmitField(u'Add Ingredient')
 
 
+# Entry form for adding special promotions using WTForms
 class SpecialPromotionsEntryForm(Form):
     sql_connection = connect_to_database()
     cursor = sql_connection.cursor()
@@ -100,6 +104,7 @@ class SpecialPromotionsEntryForm(Form):
     submit = SubmitField(u'Add Promotion')
 
 
+# Entry form for customer information using WTForms
 class CustomersEntryForm(Form):
     sql_connection = connect_database("classmysql.engr.oregonstate.edu", "cs340_highlanb", "0223", "cs340_highlanb")
     cursor = sql_connection.cursor()
@@ -121,10 +126,12 @@ class CustomersEntryForm(Form):
     submit = SubmitField(u'Add Customer')
 
 
+# display a list of links for database pages
 @app.route('/index.html')
 def index():
     return css + links + "</html>"
 
+# Allows adding and viewing ingredient information
 @app.route('/ingredients.html', methods=['POST', 'GET'])
 def ingredients():
     sql_connection = connect_to_database()
@@ -134,6 +141,8 @@ def ingredients():
         ing_name = request.form['ingredient_name']
         ing_supplier = request.form['supplier']
         ing_cost = request.form['cost']
+
+        # redirect to error page if missing or invalid data
         if ing_name == "" or ing_supplier == "" or ing_cost == "" or not ing_cost.is_numeric():
             return redirect("/invalid.html")
         query = "INSERT INTO ingredients (ingredient_name, supplier, cost) VALUES ('%s', '%s', '%s');"
@@ -143,20 +152,27 @@ def ingredients():
         sql_connection.close()
         return redirect("/ingredients.html")
     elif request.method == 'GET':
+
         query = "SELECT * FROM ingredients"
         cursor.execute(query)
+
+        # populate lists for making table
         results = []
         for ingredient in cursor:
             results += [ingredient]
         tables = []
         for ingredients in results:
             tables += [IngredientItem(ingredients[0], ingredients[1], ingredients[2], ingredients[3])]
-
+        
+        # Make the table of ingredients for display
         ingredient_table = IngredientTable(tables, border=1)
         cursor.close()
         sql_connection.close()
+        
+        # display the ingredient entry form and ingredients table
         return html_top + css + links + "<body>" + render_template('addingredients.html', form=form) + "<h1>Ingredient Information</h1>" + ingredient_table.__html__() + "</body></html>"
 
+# Allows adding and viewing of customer information
 @app.route('/customers.html', methods=['POST', 'GET'])
 def customers():
     sql_connection = connect_to_database()
@@ -174,17 +190,22 @@ def customers():
         for email in cursor:
             if "(u'" + cust_email + "',)" == str(email):
                 dup_email = 1
+        # redirect to error page if invalid or duplicate data entered
         if cust_name == "" or dup_email:
             return redirect("/invalid.html")
 
+        # Add the customer to the database
         query = "INSERT INTO customerss (name, email, phone, favorite_drink, promo_applied) VALUES ('%s', '%s', '%s', '%s', '%s');"
         cursor.execute(query%(cust_name, cust_email, cust_phone, cust_fav_drink, cust_special_promo))
         sql_connection.commit()
+        # reload the page
         return redirect("/customers.html")
 
     elif request.method == 'GET':
         query = "SELECT id, name, email, phone, favorite_drink, promo_applied FROM customerss"
         cursor.execute(query)
+
+        # populate lists for making table
         results = []
         for customer in cursor:
             results += [customer]
@@ -192,15 +213,17 @@ def customers():
         for customer in results:
             tables += [CustomerItem(customer[0], customer[1], customer[2], customer[3], customer[4], customer[5])]
 
+        # Create table of customer data
         customer_table = CustomerTable(tables, border=1)
 
+        # display the customer entry template and the customer data table
         return html_top + css + links + "<body>" + render_template('addcustomers.html', form=form) + "<h1>Customer Information</h1>" + customer_table.__html__() + "</body></html>"
 
 @app.route('/invalid.html')
 def invalid():
     return html_top + css + links + "<body>" + "<h1>Invalid or Duplicate Entry</h1></body></html>"
 
-
+# Page to enter new special promotions and their associated discount percent
 @app.route('/promotions.html', methods=['POST', 'GET'])
 def promotions():
     sql_connection = connect_to_database()
@@ -210,17 +233,23 @@ def promotions():
     if request.method == 'POST':
         promo_name = request.form['promotion_name']
         discount = request.form['discount']
+
+        # check that required data is entered
         if promo_name == "" or discount == "":
             return redirect("/invalid.html")
+        # add promotion to database
         query = "INSERT INTO special_promotions (discount_percentage, promo_name) VALUES ('%s', '%s');"
         cursor.execute(query%(discount, promo_name))
         sql_connection.commit()
         cursor.close()
         sql_connection.close()
         return redirect("/promotions.html")
+
     elif request.method == 'GET':
         query = "SELECT * FROM special_promotions"
         cursor.execute(query)
+        
+        # populate lists for making table
         results = []
         for promotion in cursor:
             results += [promotion]
@@ -228,6 +257,7 @@ def promotions():
         for promotions in results:
             tables += [PromotionItem(promotions[0], promotions[1], promotions[2])]
 
+        # Make the promotion table to display
         promotion_table = PromotionTable(tables, border=1)
         return html_top + css + links + "<body>" + render_template("addpromotions.html", form=form) + "<h1>Available Promotions:</h1>" + promotion_table.__html__() + "</body></html>"
 
