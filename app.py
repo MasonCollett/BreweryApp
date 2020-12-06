@@ -228,20 +228,27 @@ def browse_drinks():
         name = request.form['name']
         inventory = request.form['inventory']
         secret_ingredient = request.form['sec_ing']
+
         if(price != '' and inventory != '' and name != ''):
             query = 'INSERT INTO drinks (price, inventory, secret_ingredient, name) VALUES (%s,%s,%s, %s)'
-            data = (price, inventory, secret_ingredient, name)
+            if secret_ingredient == '0':
+                data = (price, inventory, None, name)
+            else:
+                data = (price, inventory, secret_ingredient, name)
             execute_query(db_connection, query, data)
             print("drink added!")
 
     # Getting current drinks
     print("Fetching and rendering drinks web page")
-    query = "SELECT drinks.id, price, inventory, ingredients.ingredient_name as 'Secret Ingredient', drinks.name from drinks JOIN ingredients ON drinks.secret_ingredient = ingredients.id;"
+    query = "SELECT drinks.id, price, inventory, ingredients.ingredient_name as 'Secret Ingredient', drinks.name from drinks LEFT JOIN ingredients ON drinks.secret_ingredient = ingredients.id;"
     drink_result = execute_query(db_connection, query).fetchall()
 
     # Getting ingredients for add new drink dropdown
     query = 'SELECT id, ingredient_name FROM ingredients'
     ing_result = execute_query(db_connection, query).fetchall()
+    ing_result = list(ing_result)
+    ing_result.append((0,'None'))
+    ing_result = tuple(ing_result)
 
     return render_template('browse_drinks.html', rows=drink_result, ingredients=ing_result, links=links)
 
@@ -273,8 +280,12 @@ def update_drink(id):
         if drink_result == None:
             return "No such drink found!"
 
+        # ingredients dropdown
         query = 'SELECT id, ingredient_name FROM ingredients'
         ing_result = execute_query(db_connection, query).fetchall()
+        ing_result = list(ing_result)
+        ing_result.append((0,'None'))
+        ing_result = tuple(ing_result)
         return render_template('drink_update.html', drink=drink_result, ingredients=ing_result)
 
     # update drink
@@ -286,12 +297,16 @@ def update_drink(id):
         name = request.form['name']
         secret_ingredient = request.form['sec_ing']
 
-        query = "UPDATE drinks SET price = %s, inventory = %s, secret_ingredient = %s, name = %s WHERE id = %s"
-        data = (price, inventory, secret_ingredient, name, id)
-        result = execute_query(db_connection, query, data)
-        print(str(result.rowcount) + " row(s) updated")
+        if(price != '' and inventory != '' and name != ''):
+            query = "UPDATE drinks SET price = %s, inventory = %s, secret_ingredient = %s, name = %s WHERE id = %s"
+            if secret_ingredient == '0':
+                data = (price, inventory, None, name, id)
+            else:
+                data = (price, inventory, secret_ingredient, name, id)
+            result = execute_query(db_connection, query, data)
+            print(str(result.rowcount) + " row(s) updated")
 
-        return redirect('/browse_drinks.html')
+            return redirect('/browse_drinks.html')
 
 @app.route('/drink_search', methods=['GET', 'POST'])
 def drink_search():
