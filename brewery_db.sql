@@ -36,7 +36,7 @@ UNLOCK TABLES;
 CREATE TABLE `special_promotions` (
   `id` int(11) NOT NULL AUTO_INCREMENT UNIQUE,
   `discount_percentage` decimal NOT NULL,
-  `promo_name` varchar(255) NOT NULL,
+  `promo_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -67,6 +67,9 @@ CREATE TABLE `customerss` (
   `phone` varchar(255),
   `favorite_drink` int(11),
   `promo_applied` int(11),
+  `phone` varchar(255) DEFAULT NULL,
+  `favorite_drink` int(11) NOT NULL,
+  `promo_applied` int(11) NOT NULL,
   KEY `promo_applied` (`promo_applied`),
   KEY `favorite_drink` (`favorite_drink`),
   CONSTRAINT `customers_drinks_ibfk_1` FOREIGN KEY (`favorite_drink`) REFERENCES `drinks` (`id`),
@@ -75,7 +78,5 @@ CREATE TABLE `customerss` (
 
 
 LOCK TABLES `customerss` WRITE;
-INSERT INTO `customerss` VALUES (1, 'John','john123@gmail.com','5031234567',1,2),(2, 'Carol','queenb@yahoo.com',NULL,1,1);
+INSERT INTO `customerss` VALUES (1, 'John','john123@gmail.com','5031234567',1,2),(2, 'Carol','queenb@yahoo.com',NULL,1,1),(3,'Lebron','lebronjames@lakers.com','5555555555',2,1);
 UNLOCK TABLES;
-
-
