@@ -1,10 +1,12 @@
 <html>
 <head>
-    <title>Browse drinks</title>
-</head>
+    <title>It'll Get You Drunk</title>
+    <link rel='stylesheet' href='static/CSS/flask_stylesheet.css'/></head>
 <body>
 
-  <h1>Add new drink</a></h1>
+  {{links|safe}}
+    
+  <h1>Add new drink</h1>
   <form id="adddrink" action="/browse_drinks.html" method="post">
       Price: <input type="number" name="price" placeholder="required"><br>
       Name: <input type="text" name="name" placeholder="required"><br>
@@ -45,8 +47,6 @@
         </tbody>
     </table>
     <br>
-    {{links|safe}}
-
   </body>
 </html>
 
