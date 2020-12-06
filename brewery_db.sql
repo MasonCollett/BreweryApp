@@ -64,7 +64,7 @@ CREATE TABLE `customerss` (
   `id` int(11) AUTO_INCREMENT PRIMARY KEY,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) UNIQUE,
-  `phone` varchar(255) NOT NULL,
+  `phone` varchar(255),
   `favorite_drink` int(11),
   `promo_applied` int(11),
   KEY `promo_applied` (`promo_applied`),

@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import render_template, request, redirect, url_for
 from flask_table import Table, Col
-from wtforms import Form, StringField, DecimalField, SubmitField, widgets, SelectMultipleField
+from wtforms import Form, StringField, DecimalField, SubmitField, widgets, SelectField
 import mysql.connector
 from db_connector.db_connector import connect_to_database, execute_query
 # from db_connector.db_connector import connect_to_database, execute_query
@@ -30,11 +30,6 @@ links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/drink_search">Sea
 #         return db_connect
 #     except:
 #         print("Connection failed\n")
-
-
-class MultiCheckboxField(SelectMultipleField):
-    widget = widgets.ListWidget(prefix_label=False)
-    option_widget = widgets.CheckboxInput()
 
 
 class IngredientTable(Table):
@@ -75,15 +70,14 @@ class PromotionTable(Table):
     promotion_id = Col('id')
     discount = Col('Discount %')
     promotion_name = Col('Promotion Name')
-    # applicable_drink = Col('Applicable Drink')
 
 
 class PromotionItem(object):
-    def __init__(self, promotion_id, discount, promotion_name): # , applicable_drink):
+    def __init__(self, promotion_id, discount, promotion_name):
         self.promotion_id = promotion_id
         self.discount = discount
         self.promotion_name = promotion_name
-        # self.applicable_drink = applicable_drink
+
 
 
 class IngredientEntryForm(Form):
@@ -103,8 +97,6 @@ class SpecialPromotionsEntryForm(Form):
         results += [customer]
     promo_name = StringField(u'Promotion Name')
     discount_percentage = DecimalField(u'Discount Percentage', places=1)
-    # drink_on_special = StringField(u'Applicable Drinks')
-    # drinks = MultiCheckboxField('Drinks', choices=results)
     submit = SubmitField(u'Add Promotion')
 
 
@@ -112,8 +104,8 @@ class CustomersEntryForm(Form):
     name = StringField(u'Name')
     email = StringField(u'Email Address')
     phone = StringField(u'Phone Number')
-    favorite_drink = StringField(u'Favorite Drink')
-    promo_applied = StringField(u'Current Promotion Applied')
+    favorite_drink = SelectField(u'Favorite Drink')
+    promo_applied = SelectField(u'Current Promotion Applied')
     submit = SubmitField(u'Add Customer')
 
 
@@ -131,7 +123,7 @@ def ingredients():
         ing_supplier = request.form['supplier']
         ing_cost = request.form['cost']
         if ing_name == "" or ing_supplier == "" or ing_cost == "" or not ing_cost.is_numeric():
-            return redirect("/ingredients.html")
+            return redirect("/invalid.html")
         query = "INSERT INTO ingredients (ingredient_name, supplier, cost) VALUES ('%s', '%s', '%s');"
         cursor.execute(query%(ing_name, ing_supplier, ing_cost))
         sql_connection.commit()
@@ -158,14 +150,21 @@ def customers():
     sql_connection = connect_to_database()
     cursor = sql_connection.cursor()
     form = CustomersEntryForm()
+    dup_email = 0
     if request.method == 'POST':
         cust_name = request.form['name']
         cust_email = request.form['email']
         cust_phone = request.form['phone']
         cust_fav_drink = request.form['favorite_drink']
         cust_special_promo = request.form['promo_applied']
-        if cust_name == "":
-            return redirect("/customers.html")
+        query = "SELECT email FROM customerss"
+        cursor.execute(query)
+        for email in cursor:
+            if "(u'" + cust_email + "',)" == str(email):
+                dup_email = 1
+        if cust_name == "" or dup_email:
+            return redirect("/invalid.html")
+
         query = "INSERT INTO customerss (name, email, phone, favorite_drink, promo_applied) VALUES ('%s', '%s', '%s', '%s', '%s');"
         cursor.execute(query%(cust_name, cust_email, cust_phone, cust_fav_drink, cust_special_promo))
         sql_connection.commit()
@@ -185,6 +184,10 @@ def customers():
 
         return html_top + css + links + "<body>" + render_template('addcustomers.html', form=form) + "<h1>Customer Information</h1>" + customer_table.__html__() + "</body></html>"
 
+@app.route('/invalid.html')
+def invalid():
+    return html_top + css + links + "<body>" + "<h1>Invalid or Duplicate Entry</h1></body></html>"
+
 
 @app.route('/promotions.html', methods=['POST', 'GET'])
 def promotions():
@@ -193,17 +196,14 @@ def promotions():
     form = SpecialPromotionsEntryForm()
 
     if request.method == 'POST':
-        # return "<html><body>" + str(request.form) + "</body></html>"
-
         promo_name = request.form['promotion_name']
         discount = request.form['discount']
-        cust_special_promo = request.form['promo_applied']
-        if promo_name == "" or discount == "" or cust_special_promo == "":
-            return redirect("/promotions.html")
+        if promo_name == "" or discount == "":
+            return redirect("/invalid.html")
         query = "INSERT INTO special_promotions (promo_name, discount_percentage) VALUES ('%s', '%s');"
         cursor.execute(query%(promo_name, discount))
         sql_connection.commit()
-        return redirect("/promotions.html")
+        return redirect("/invalid.html")
     elif request.method == 'GET':
         query = "SELECT * FROM special_promotions"
         cursor.execute(query)
