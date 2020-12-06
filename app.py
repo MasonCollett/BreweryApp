@@ -17,7 +17,7 @@ links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/ingredients.html"
 links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/customers.html">View/Add Customers</a></li>'
 links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/promotions.html">View/Add Promotions</a></li>'
 links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/browse_drinks.html">View/Add Drinks</a></li>'
-links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/drink_update.html">Update Drinks</a></li>'
+links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/promotions_drinks">Active Promotions</a></li>'
 links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/drink_search">Search Drinks</a></li></ul>'
 
 
@@ -301,9 +301,9 @@ def drink_search():
         drink_id = request.form['drink']
         drink_query = 'SELECT id, price, inventory, secret_ingredient, name from drinks WHERE id = %s' % (drink_id)
         drink_result = execute_query(db_connection, drink_query).fetchall()
-        return render_template('drink_search.html', drink=drink_result)
+        return render_template('drink_search.html', drink=drink_result, links=links)
 
-    return render_template('drink_search.html')
+    return render_template('drink_search.html', links=links)
 
 @app.route('/promotions_drinks', methods=['POST', 'GET'])
 def promotions_drinks():
@@ -314,7 +314,7 @@ def promotions_drinks():
         print("Add new m:m relationship!")
         drink_id = request.form['drink_id']
         promo_id = request.form['promo_id']
-        query = 'INSERT INTO promotions_drinks (drink_id, promotion_id) VALUES (%s,%s)'
+        query = 'INSERT IGNORE INTO promotions_drinks (drink_id, promotion_id) VALUES (%s,%s)'
         data = (drink_id, promo_id)
         execute_query(db_connection, query, data)
         print("relationship added!")
