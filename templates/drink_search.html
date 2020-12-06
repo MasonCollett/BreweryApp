@@ -1,11 +1,14 @@
 <html>
     <head>
         <title>Drink Search</title> 
+        <link rel='stylesheet' href='static/CSS/flask_stylesheet.css'/></head>
     </head>
 <body>
+    {{links|safe}}
+
     <h1>Drink Search</h1>
     <form class="example" method="POST" action="">
-        <input type="text" placeholder="Search by drink ID" name="drink">
+        <input type="text" placeholder="Search by drink ID" name="drink" required>
         <input type="submit" value="Submit">
     </form>
     <br>
