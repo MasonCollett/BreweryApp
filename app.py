@@ -231,7 +231,7 @@ def promotions():
     form = SpecialPromotionsEntryForm()
 
     if request.method == 'POST':
-        promo_name = request.form['promotion_name']
+        promo_name = request.form['promo_name']
         discount = request.form['discount_percentage']
 
         # check that required data is entered
