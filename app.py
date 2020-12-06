@@ -130,7 +130,7 @@ def ingredients():
         ing_name = request.form['ingredient_name']
         ing_supplier = request.form['supplier']
         ing_cost = request.form['cost']
-        if ing_name == "" or ing_supplier == "" or ing_cost == "" or not ing_cost.is_numeric():
+        if ing_name == "" or ing_supplier == "" or ing_cost == "" or not ing_cost.isnumeric():
             return redirect("/ingredients.html")
         query = "INSERT INTO ingredients (ingredient_name, supplier, cost) VALUES ('%s', '%s', '%s');"
         cursor.execute(query%(ing_name, ing_supplier, ing_cost))
