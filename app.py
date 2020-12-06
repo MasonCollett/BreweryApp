@@ -212,10 +212,12 @@ def promotions():
         discount = request.form['discount']
         if promo_name == "" or discount == "":
             return redirect("/invalid.html")
-        query = "INSERT INTO special_promotions (promo_name, discount_percentage) VALUES ('%s', '%s');"
-        cursor.execute(query%(promo_name, discount))
+        query = "INSERT INTO special_promotions (discount_percentage, promo_name) VALUES ('%s', '%s');"
+        cursor.execute(query%(discount, promo_name))
         sql_connection.commit()
-        return redirect("/invalid.html")
+        cursor.close()
+        sql_connection.close()
+        return redirect("/promotions.html")
     elif request.method == 'GET':
         query = "SELECT * FROM special_promotions"
         cursor.execute(query)
