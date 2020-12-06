@@ -10,13 +10,15 @@ from db_connector.db_connector import connect_to_database, execute_query
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-
-links = ' <a href="http://flip3.engr.oregonstate.edu:36963/ingredients.html">View/Add Ingredients</a><br>'
-links += ' <a href="http://flip3.engr.oregonstate.edu:36963/customers.html">View/Add Customers</a><br>'
-links += ' <a href="http://flip3.engr.oregonstate.edu:36963/promotions.html">View/Add Available Promotions</a><br>'
-links += ' <a href="http://flip3.engr.oregonstate.edu:36963/browse_drinks.html">View/Add Drinks</a><br>'
-links += ' <a href="http://flip3.engr.oregonstate.edu:36963/drink_search.html">Search Drinks</a><br>'
-links += ' <a href="http://flip3.engr.oregonstate.edu:36963/promotions_drinks">View/Add/Delete Active Promotions</a><br>'
+html_top = "<!DOCTYPE html><html>"
+css = "<head><title>It'll Get You Drunk</title><link rel='stylesheet' href='static/CSS/flask_stylesheet.css'/></head><body>"
+links = "<header> <div class='container'> <h1 class='logo'>It'll Get You Drunk Brewpub</h1><nav><u1 class='menu'>"
+links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/ingredients.html">View/Add Ingredients</a></li>'
+links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/customers.html">View/Add Customers</a></li>'
+links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/promotions.html">View/Add Promotions</a></li>'
+links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/browse_drinks.html">View/Add Drinks</a></li>'
+links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/drink_update.html">Update Drinks</a></li>'
+links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/drink_search">Search Drinks</a></li></ul>'
 
 
 # Connector information found at https://dev.mysql.com/doc/connector-python/en/connector-python-connectargs.html
@@ -101,8 +103,8 @@ class SpecialPromotionsEntryForm(Form):
         results += [customer]
     promo_name = StringField(u'Promotion Name')
     discount_percentage = DecimalField(u'Discount Percentage', places=1)
-    drink_on_special = StringField(u'Applicable Drinks')
-    drinks = MultiCheckboxField('Drinks', choices=results)
+    # drink_on_special = StringField(u'Applicable Drinks')
+    # drinks = MultiCheckboxField('Drinks', choices=results)
     submit = SubmitField(u'Add Promotion')
 
 
@@ -117,14 +119,7 @@ class CustomersEntryForm(Form):
 
 @app.route('/index.html')
 def index():
-    sql_connection = connect_to_database()
-    cursor = sql_connection.cursor()
-    payload = "<tr>"
-    payload += str(links) + "</tr><br>"
-    cursor.close()
-    sql_connection.close()
-    return "<html><body><h1>Welcome to It'll Get You Drunk Brewpub:</h1>" + payload + "</body></html>"
-
+    return css + links + "</html>"
 
 @app.route('/ingredients.html', methods=['POST', 'GET'])
 def ingredients():
@@ -156,7 +151,7 @@ def ingredients():
         ingredient_table = IngredientTable(tables, border=1)
         cursor.close()
         sql_connection.close()
-        return "<html><body>" + render_template('addingredients.html', form=form) + "<h1>Ingredient Information</h1>" + ingredient_table.__html__() + links + "</body></html>"
+        return html_top + css + links + "<body>" + render_template('addingredients.html', form=form) + "<h1>Ingredient Information</h1>" + ingredient_table.__html__() + "</body></html>"
 
 @app.route('/customers.html', methods=['POST', 'GET'])
 def customers():
@@ -188,7 +183,7 @@ def customers():
 
         customer_table = CustomerTable(tables, border=1)
 
-        return "<html><body>" + render_template('addcustomers.html', form=form) + "<h1>Customer Information</h1>" + customer_table.__html__() + links + "</body></html>"
+        return html_top + css + links + "<body>" + render_template('addcustomers.html', form=form) + "<h1>Customer Information</h1>" + customer_table.__html__() + "</body></html>"
 
 
 @app.route('/promotions.html', methods=['POST', 'GET'])
@@ -220,7 +215,7 @@ def promotions():
             tables += [PromotionItem(promotions[0], promotions[1], promotions[2])]
 
         promotion_table = PromotionTable(tables, border=1)
-        return "<html><body>" + render_template("addpromotions.html", form=form) + "<h1>Available Promotions:</h1>" + promotion_table.__html__() + links + "</body></html>"
+        return html_top + css + links + "<body>" + render_template("addpromotions.html", form=form) + "<h1>Available Promotions:</h1>" + promotion_table.__html__() + "</body></html>"
 
 @app.route('/browse_drinks.html', methods=['POST', 'GET'])
 def browse_drinks():
