@@ -47,6 +47,7 @@ class IngredientItem(object):
         self.supplier = supplier
         self.cost = cost
 
+
 # class for making customer table
 class CustomerTable(Table):
     customer_id = Col('id')
@@ -55,6 +56,7 @@ class CustomerTable(Table):
     phone_number = Col('Phone Number')
     favorite_drink = Col('Favorite Drink')
     promo_applied = Col('Current Promotion Applied')
+
 
 # class for customers from form
 class CustomerItem(object):
@@ -92,13 +94,6 @@ class IngredientEntryForm(Form):
 
 # Entry form for adding special promotions using WTForms
 class SpecialPromotionsEntryForm(Form):
-    sql_connection = connect_to_database()
-    cursor = sql_connection.cursor()
-    query = "SELECT id, name FROM customerss"
-    cursor.execute(query)
-    results = []
-    for customer in cursor:
-        results += [customer]
     promo_name = StringField(u'Promotion Name')
     discount_percentage = DecimalField(u'Discount Percentage', places=1)
     submit = SubmitField(u'Add Promotion')
@@ -231,7 +226,7 @@ def promotions():
     form = SpecialPromotionsEntryForm()
 
     if request.method == 'POST':
-        promo_name = request.form['promotion_name']
+        promo_name = request.form['promo_name']
         discount = request.form['discount_percentage']
 
         # check that required data is entered
