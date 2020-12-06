@@ -101,11 +101,23 @@ class SpecialPromotionsEntryForm(Form):
 
 
 class CustomersEntryForm(Form):
+    sql_connection = connect_database("classmysql.engr.oregonstate.edu", "cs340_highlanb", "0223", "cs340_highlanb")
+    cursor = sql_connection.cursor()
+    query = "SELECT id, name FROM drinks"
+    cursor.execute(query)
+    drink_choices = []
+    for drink in cursor:
+        drink_choices += [drink]
+    query = "SELECT id, promo_name FROM special_promotions"
+    cursor.execute(query)
+    promotions = []
+    for promotion in cursor:
+        promotions += [promotion]
     name = StringField(u'Name')
     email = StringField(u'Email Address')
     phone = StringField(u'Phone Number')
-    favorite_drink = SelectField(u'Favorite Drink')
-    promo_applied = SelectField(u'Current Promotion Applied')
+    favorite_drink = SelectField(u'Favorite Drink', choices=drink_choices)
+    promo_applied = SelectField(u'Current Promotion Applied', choices=promotions)
     submit = SubmitField(u'Add Customer')
 
 
