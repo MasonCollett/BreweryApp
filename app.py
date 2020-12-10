@@ -11,8 +11,8 @@ from db_connector.db_connector import connect_to_database, execute_query
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 html_top = "<!DOCTYPE html><html>"
-css = "<head><title>It'll Get You Drunk</title><link rel='stylesheet' href='static/CSS/flask_stylesheet.css'/></head><body>"
-links = "<header> <div class='container'> <h1 class='logo'>It'll Get You Drunk Brewpub</h1><nav><u1 class='menu'>"
+css = "<head><title>Brewpubk</title><link rel='stylesheet' href='static/CSS/flask_stylesheet.css'/></head><body>"
+links = "<header> <div class='container'> <h1 class='logo'>Brewpub</h1><nav><u1 class='menu'>"
 links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/ingredients.html">View/Add Ingredients</a></li>'
 links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/customers.html">View/Add Customers</a></li>'
 links += '<li><a href="http://flip3.engr.oregonstate.edu:36963/promotions.html">View/Add Promotions</a></li>'
